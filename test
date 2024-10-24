@@ -1,53 +1,97 @@
 local UILibrary = {}
 
 function UILibrary:CreateWindow(title)
-    -- Criando o ScreenGui e Frame principal
     local screenGui = Instance.new("ScreenGui")
     local mainFrame = Instance.new("Frame")
     local closeButton = Instance.new("TextButton")
     local uiCorner = Instance.new("UICorner")
 
     -- Configurações do ScreenGui
-    screenGui.Name = "CustomUI"
+    screenGui.Name = "CompactUI"
     screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     screenGui.ResetOnSpawn = false
 
-    -- Configurações do Frame principal
+    -- Configurações do Frame principal (Compacto)
     mainFrame.Name = "MainFrame"
     mainFrame.Parent = screenGui
     mainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    mainFrame.Size = UDim2.new(0, 300, 0, 200)
-    mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    mainFrame.Size = UDim2.new(0, 200, 0, 150)
+    mainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
     mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     mainFrame.Active = true
-    mainFrame.Draggable = true -- Permite arrastar a janela
+    mainFrame.Draggable = true -- Permitir arrastar
 
-    -- Adicionando bordas arredondadas ao Frame principal
-    uiCorner.Parent = mainFrame
+    -- Bordas arredondadas
     uiCorner.CornerRadius = UDim.new(0, 10)
+    uiCorner.Parent = mainFrame
 
-    -- Configuração do botão de fechar
+    -- Botão de Fechar
     closeButton.Name = "CloseButton"
     closeButton.Parent = mainFrame
     closeButton.Text = "X"
     closeButton.Size = UDim2.new(0, 30, 0, 30)
-    closeButton.Position = UDim2.new(1, -35, 0, 5) -- Canto superior direito
-    closeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Fundo preto
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
+    closeButton.Position = UDim2.new(1, -35, 0, 5)
+    closeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     closeButton.Font = Enum.Font.SourceSans
     closeButton.TextSize = 18
 
-    -- Adicionando bordas arredondadas ao botão de fechar
     local closeButtonCorner = Instance.new("UICorner")
-    closeButtonCorner.CornerRadius = UDim.new(1, 0) -- Botão totalmente arredondado
+    closeButtonCorner.CornerRadius = UDim.new(1, 0)
     closeButtonCorner.Parent = closeButton
 
     -- Função para fechar a janela
     closeButton.MouseButton1Click:Connect(function()
-        screenGui:Destroy() -- Remove o ScreenGui
+        screenGui:Destroy()
     end)
 
     return {frame = mainFrame}
+end
+
+function UILibrary:CreateSection(parent, sectionTitle)
+    local sectionFrame = Instance.new("Frame")
+    local sectionButton = Instance.new("TextButton")
+    local contentFrame = Instance.new("Frame")
+    local uiCorner = Instance.new("UICorner")
+
+    -- Frame da Seção
+    sectionFrame.Parent = parent
+    sectionFrame.Size = UDim2.new(1, 0, 0, 30)
+    sectionFrame.BackgroundTransparency = 1
+
+    -- Botão da Seção
+    sectionButton.Parent = sectionFrame
+    sectionButton.Text = sectionTitle
+    sectionButton.Size = UDim2.new(1, 0, 1, 0)
+    sectionButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    sectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sectionButton.Font = Enum.Font.SourceSans
+    sectionButton.TextSize = 18
+
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 5)
+    buttonCorner.Parent = sectionButton
+
+    -- Frame de Conteúdo da Seção (inicialmente escondido)
+    contentFrame.Parent = parent
+    contentFrame.Size = UDim2.new(1, 0, 0, 0)
+    contentFrame.Position = UDim2.new(0, 0, 0, 30)
+    contentFrame.BackgroundTransparency = 1
+    contentFrame.ClipsDescendants = true -- Esconde o conteúdo extra
+
+    local expanded = false
+
+    -- Função para abrir e fechar a seção
+    sectionButton.MouseButton1Click:Connect(function()
+        if expanded then
+            contentFrame:TweenSize(UDim2.new(1, 0, 0, 0), "Out", "Quad", 0.3, true)
+        else
+            contentFrame:TweenSize(UDim2.new(1, 0, 0, 100), "Out", "Quad", 0.3, true)
+        end
+        expanded = not expanded
+    end)
+
+    return contentFrame
 end
 
 function UILibrary:CreateButton(parent, buttonText, callback)
@@ -56,22 +100,19 @@ function UILibrary:CreateButton(parent, buttonText, callback)
 
     button.Parent = parent
     button.Text = buttonText
-    button.Size = UDim2.new(0, 200, 0, 50)
-    button.Position = UDim2.new(0.5, -100, 0.5, -25)
-    button.AnchorPoint = Vector2.new(0.5, 0.5)
-    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Fundo preto
-    button.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
+    button.Size = UDim2.new(1, -10, 0, 40)
+    button.Position = UDim2.new(0, 5, 0, 5)
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.Font = Enum.Font.SourceSans
     button.TextSize = 18
+    button.TextScaled = true
 
-    -- Adicionando bordas arredondadas ao botão
     uiCorner.CornerRadius = UDim.new(0, 10)
     uiCorner.Parent = button
 
-    -- Ajustando tamanho do texto para evitar bugs em mobile
-    button.TextScaled = true
     button.MouseButton1Click:Connect(function()
-        callback() -- Executa a função de callback passada
+        callback()
     end)
 end
 
