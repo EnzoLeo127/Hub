@@ -5,6 +5,7 @@ function UILibrary:CreateWindow(title)
     local screenGui = Instance.new("ScreenGui")
     local mainFrame = Instance.new("Frame")
     local closeButton = Instance.new("TextButton")
+    local uiCorner = Instance.new("UICorner")
 
     -- Configurações do ScreenGui
     screenGui.Name = "CustomUI"
@@ -21,16 +22,25 @@ function UILibrary:CreateWindow(title)
     mainFrame.Active = true
     mainFrame.Draggable = true -- Permite arrastar a janela
 
+    -- Adicionando bordas arredondadas ao Frame principal
+    uiCorner.Parent = mainFrame
+    uiCorner.CornerRadius = UDim.new(0, 10)
+
     -- Configuração do botão de fechar
     closeButton.Name = "CloseButton"
     closeButton.Parent = mainFrame
     closeButton.Text = "X"
     closeButton.Size = UDim2.new(0, 30, 0, 30)
-    closeButton.Position = UDim2.new(1, -35, 0, 5) -- No canto superior direito
-    closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.Position = UDim2.new(1, -35, 0, 5) -- Canto superior direito
+    closeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Fundo preto
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
     closeButton.Font = Enum.Font.SourceSans
     closeButton.TextSize = 18
+
+    -- Adicionando bordas arredondadas ao botão de fechar
+    local closeButtonCorner = Instance.new("UICorner")
+    closeButtonCorner.CornerRadius = UDim.new(1, 0) -- Botão totalmente arredondado
+    closeButtonCorner.Parent = closeButton
 
     -- Função para fechar a janela
     closeButton.MouseButton1Click:Connect(function()
@@ -42,17 +52,24 @@ end
 
 function UILibrary:CreateButton(parent, buttonText, callback)
     local button = Instance.new("TextButton")
+    local uiCorner = Instance.new("UICorner")
 
     button.Parent = parent
     button.Text = buttonText
     button.Size = UDim2.new(0, 200, 0, 50)
     button.Position = UDim2.new(0.5, -100, 0.5, -25)
     button.AnchorPoint = Vector2.new(0.5, 0.5)
-    button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Fundo preto
+    button.TextColor3 = Color3.fromRGB(255, 255, 255) -- Texto branco
     button.Font = Enum.Font.SourceSans
     button.TextSize = 18
 
+    -- Adicionando bordas arredondadas ao botão
+    uiCorner.CornerRadius = UDim.new(0, 10)
+    uiCorner.Parent = button
+
+    -- Ajustando tamanho do texto para evitar bugs em mobile
+    button.TextScaled = true
     button.MouseButton1Click:Connect(function()
         callback() -- Executa a função de callback passada
     end)
