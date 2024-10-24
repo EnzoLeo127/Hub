@@ -4,26 +4,41 @@ function UILibrary:CreateWindow(title)
     local screenGui = Instance.new("ScreenGui")
     local mainFrame = Instance.new("Frame")
     local closeButton = Instance.new("TextButton")
+    local titleLabel = Instance.new("TextLabel")
     local uiCorner = Instance.new("UICorner")
+    local uiListLayout = Instance.new("UIListLayout")
 
     -- Configurações do ScreenGui
     screenGui.Name = "CompactUI"
     screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     screenGui.ResetOnSpawn = false
 
-    -- Configurações do Frame principal (Compacto)
+    -- Frame principal
     mainFrame.Name = "MainFrame"
     mainFrame.Parent = screenGui
     mainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    mainFrame.Size = UDim2.new(0, 200, 0, 150)
-    mainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+    mainFrame.Size = UDim2.new(0, 220, 0, 200)
+    mainFrame.Position = UDim2.new(0.5, -110, 0.5, -100)
     mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     mainFrame.Active = true
-    mainFrame.Draggable = true -- Permitir arrastar
+    mainFrame.Draggable = true -- Permitir arrastar no PC e Mobile
 
-    -- Bordas arredondadas
-    uiCorner.CornerRadius = UDim.new(0, 10)
-    uiCorner.Parent = mainFrame
+    -- Layout para organizar as seções verticalmente
+    uiListLayout.Parent = mainFrame
+    uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    uiListLayout.Padding = UDim.new(0, 10)
+
+    -- Label do título
+    titleLabel.Name = "TitleLabel"
+    titleLabel.Parent = mainFrame
+    titleLabel.Text = title
+    titleLabel.Size = UDim2.new(1, -40, 0, 30)
+    titleLabel.Position = UDim2.new(0, 10, 0, 5)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Font = Enum.Font.SourceSansBold
+    titleLabel.TextSize = 20
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     -- Botão de Fechar
     closeButton.Name = "CloseButton"
@@ -40,10 +55,14 @@ function UILibrary:CreateWindow(title)
     closeButtonCorner.CornerRadius = UDim.new(1, 0)
     closeButtonCorner.Parent = closeButton
 
-    -- Função para fechar a janela
+    -- Fechar a janela ao clicar
     closeButton.MouseButton1Click:Connect(function()
         screenGui:Destroy()
     end)
+
+    -- Bordas arredondadas
+    uiCorner.CornerRadius = UDim.new(0, 10)
+    uiCorner.Parent = mainFrame
 
     return {frame = mainFrame}
 end
@@ -54,12 +73,13 @@ function UILibrary:CreateSection(parent, sectionTitle)
     local contentFrame = Instance.new("Frame")
     local uiCorner = Instance.new("UICorner")
 
-    -- Frame da Seção
+    -- Frame da seção
     sectionFrame.Parent = parent
-    sectionFrame.Size = UDim2.new(1, 0, 0, 30)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 40)
     sectionFrame.BackgroundTransparency = 1
+    sectionFrame.LayoutOrder = #parent:GetChildren()
 
-    -- Botão da Seção
+    -- Botão da seção
     sectionButton.Parent = sectionFrame
     sectionButton.Text = sectionTitle
     sectionButton.Size = UDim2.new(1, 0, 1, 0)
@@ -72,10 +92,10 @@ function UILibrary:CreateSection(parent, sectionTitle)
     buttonCorner.CornerRadius = UDim.new(0, 5)
     buttonCorner.Parent = sectionButton
 
-    -- Frame de Conteúdo da Seção (inicialmente escondido)
-    contentFrame.Parent = parent
+    -- Frame de Conteúdo (inicialmente escondido)
+    contentFrame.Parent = sectionFrame
     contentFrame.Size = UDim2.new(1, 0, 0, 0)
-    contentFrame.Position = UDim2.new(0, 0, 0, 30)
+    contentFrame.Position = UDim2.new(0, 0, 1, 0)
     contentFrame.BackgroundTransparency = 1
     contentFrame.ClipsDescendants = true -- Esconde o conteúdo extra
 
