@@ -1,17 +1,18 @@
+local library = {}
 local UIS = game:GetService("UserInputService")
 
-local library = {}
-local tweenService = game:GetService("TweenService")
-
--- Função para criar uma janela
+-- Criação de janela principal
 function library:CreateWindow(title)
-    local window = Instance.new("ScreenGui")
+    local gui = Instance.new("ScreenGui")
     local mainFrame = Instance.new("Frame")
-    local titleLabel = Instance.new("TextLabel")
+    local titleBar = Instance.new("TextLabel")
 
-    window.Name = "CustomUI"
-    window.Parent = game:GetService("CoreGui")
+    -- Configurações da ScreenGui
+    gui.Name = "CustomUI"
+    gui.Parent = game:GetService("CoreGui")
+    gui.ResetOnSpawn = false
 
+    -- Configurações da Janela Principal
     mainFrame.Name = "MainFrame"
     mainFrame.Size = UDim2.new(0, 400, 0, 300)
     mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
@@ -20,52 +21,50 @@ function library:CreateWindow(title)
     mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     mainFrame.Active = true
     mainFrame.Draggable = true
-    mainFrame.Parent = window
+    mainFrame.Parent = gui
 
-    titleLabel.Name = "Title"
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextSize = 16
-    titleLabel.Text = title
-    titleLabel.Parent = mainFrame
+    -- Configuração do Título
+    titleBar.Name = "TitleBar"
+    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleBar.Font = Enum.Font.GothamBold
+    titleBar.TextSize = 16
+    titleBar.Text = title
+    titleBar.Parent = mainFrame
 
     local sectionList = {}
 
-    function window:CreateSection(name)
+    -- Função para criar seções
+    function library:CreateSection(sectionTitle)
         local section = Instance.new("Frame")
-        local sectionTitle = Instance.new("TextLabel")
+        local label = Instance.new("TextLabel")
 
-        section.Name = name
         section.Size = UDim2.new(1, -10, 0, 100)
-        section.Position = UDim2.new(0, 5, 0, 40 + (#sectionList * 110))
+        section.Position = UDim2.new(0, 5, 0, 40 + #sectionList * 110)
         section.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
         section.BorderSizePixel = 0
         section.Parent = mainFrame
 
-        sectionTitle.Name = "SectionTitle"
-        sectionTitle.Size = UDim2.new(1, 0, 0, 30)
-        sectionTitle.BackgroundTransparency = 1
-        sectionTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-        sectionTitle.Font = Enum.Font.Gotham
-        sectionTitle.TextSize = 14
-        sectionTitle.Text = name
-        sectionTitle.Parent = section
+        label.Size = UDim2.new(1, 0, 0, 30)
+        label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.Font = Enum.Font.Gotham
+        label.TextSize = 14
+        label.Text = sectionTitle
+        label.Parent = section
 
         table.insert(sectionList, section)
-
         return section
     end
 
-    return window
+    return gui
 end
 
--- Função para criar um botão dentro de uma seção
+-- Função para criar um botão
 function library:CreateButton(section, text, callback)
     local button = Instance.new("TextButton")
 
-    button.Name = "Button"
     button.Size = UDim2.new(1, -10, 0, 30)
     button.Position = UDim2.new(0, 5, 0, 35)
     button.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -75,9 +74,7 @@ function library:CreateButton(section, text, callback)
     button.Text = text
     button.Parent = section
 
-    button.MouseButton1Click:Connect(function()
-        callback()
-    end)
+    button.MouseButton1Click:Connect(callback)
 end
 
 -- Função para criar um toggle
@@ -85,7 +82,6 @@ function library:CreateToggle(section, text, callback)
     local toggle = Instance.new("TextButton")
     local state = false
 
-    toggle.Name = "Toggle"
     toggle.Size = UDim2.new(1, -10, 0, 30)
     toggle.Position = UDim2.new(0, 5, 0, 70)
     toggle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
