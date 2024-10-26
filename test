@@ -1,101 +1,40 @@
-local library = {}
-local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+function Notify(text, duration)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "NotifyGui"
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Criação de janela principal
-function library:CreateWindow(title)
-    local gui = Instance.new("ScreenGui")
-    local mainFrame = Instance.new("Frame")
-    local titleBar = Instance.new("TextLabel")
+    local notifyFrame = Instance.new("Frame")
+    notifyFrame.Size = UDim2.new(0.3, 0, 0.07, 0)
+    notifyFrame.Position = UDim2.new(0.35, 0, 0.8, 0)
+    notifyFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    notifyFrame.BackgroundTransparency = 0.4
+    notifyFrame.BorderSizePixel = 0
+    notifyFrame.Parent = screenGui
 
-    -- Configurações da ScreenGui
-    gui.Name = "CustomUI"
-    gui.Parent = game:GetService("CoreGui")
-    gui.ResetOnSpawn = false
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.4, 0)
+    corner.Parent = notifyFrame
 
-    -- Configurações da Janela Principal
-    mainFrame.Name = "MainFrame"
-    mainFrame.Size = UDim2.new(0, 400, 0, 300)
-    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mainFrame.BorderSizePixel = 0
-    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    mainFrame.Active = true
-    mainFrame.Draggable = true
-    mainFrame.Parent = gui
+    local notifyText = Instance.new("TextLabel")
+    notifyText.Size = UDim2.new(1, 0, 1, 0)
+    notifyText.BackgroundTransparency = 1
+    notifyText.TextColor3 = Color3.new(1, 1, 1)
+    notifyText.TextScaled = true
+    notifyText.Font = Enum.Font.SourceSansBold
+    notifyText.Text = text
+    notifyText.Parent = notifyFrame
 
-    -- Configuração do Título
-    titleBar.Name = "TitleBar"
-    titleBar.Size = UDim2.new(1, 0, 0, 30)
-    titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleBar.Font = Enum.Font.GothamBold
-    titleBar.TextSize = 16
-    titleBar.Text = title
-    titleBar.Parent = mainFrame
+    notifyFrame.Position = UDim2.new(0.35, 0, 1.2, 0)
+    local enterTween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), { Position = UDim2.new(0.35, 0, 0.8, 0) })
+    enterTween:Play()
 
-    local sectionList = {}
+    wait(duration)
 
-    -- Função para criar seções
-    function library:CreateSection(sectionTitle)
-        local section = Instance.new("Frame")
-        local label = Instance.new("TextLabel")
+    local exitTween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), { Position = UDim2.new(0.35, 0, 1.2, 0) })
+    exitTween:Play()
 
-        section.Size = UDim2.new(1, -10, 0, 100)
-        section.Position = UDim2.new(0, 5, 0, 40 + #sectionList * 110)
-        section.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        section.BorderSizePixel = 0
-        section.Parent = mainFrame
-
-        label.Size = UDim2.new(1, 0, 0, 30)
-        label.BackgroundTransparency = 1
-        label.TextColor3 = Color3.fromRGB(255, 255, 255)
-        label.Font = Enum.Font.Gotham
-        label.TextSize = 14
-        label.Text = sectionTitle
-        label.Parent = section
-
-        table.insert(sectionList, section)
-        return section
-    end
-
-    return gui
-end
-
--- Função para criar um botão
-function library:CreateButton(section, text, callback)
-    local button = Instance.new("TextButton")
-
-    button.Size = UDim2.new(1, -10, 0, 30)
-    button.Position = UDim2.new(0, 5, 0, 35)
-    button.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.Font = Enum.Font.Gotham
-    button.TextSize = 14
-    button.Text = text
-    button.Parent = section
-
-    button.MouseButton1Click:Connect(callback)
-end
-
--- Função para criar um toggle
-function library:CreateToggle(section, text, callback)
-    local toggle = Instance.new("TextButton")
-    local state = false
-
-    toggle.Size = UDim2.new(1, -10, 0, 30)
-    toggle.Position = UDim2.new(0, 5, 0, 70)
-    toggle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    toggle.Font = Enum.Font.Gotham
-    toggle.TextSize = 14
-    toggle.Text = text .. ": OFF"
-    toggle.Parent = section
-
-    toggle.MouseButton1Click:Connect(function()
-        state = not state
-        toggle.Text = text .. (state and ": ON" or ": OFF")
-        callback(state)
+    exitTween.Completed:Connect(function()
+        screenGui:Destroy()
     end)
 end
-
-return library
